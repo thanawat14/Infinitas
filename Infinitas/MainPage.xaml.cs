@@ -19,26 +19,21 @@ namespace Infinitas
     {
 
         // Smart Contract Transfering and Checking
-        static string seed = "calm like predict rib country globe small nation festival divert liquid lonely";
-        static string endpoint = "https://rinkeby.infura.io/v3/77dd6590a15e41c688381e7ab2c28719";
-        static string erc20ContractAddress = "0x73447F2EA765B3e9e3994D2852dcC7E420940300";
-        static string erc20ContractAbi = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"ref\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]";
-        static Wallet wallet = new Wallet(seed, null);
-        static Account account = wallet.GetAccount(0);
-        static Web3 web3 = new Web3(account, endpoint);
-        static Contract erc20Contract = web3.Eth.GetContract(erc20ContractAbi, erc20ContractAddress);
+        string seed;
+        string endpoint;
+        string erc20ContractAddress;
+        string erc20ContractAbi;
+        EtherWallet wallet;
+        Account account;
+        Web3 web3;
+        Contract erc20Contract;
 
         // Create a new MQTT client.
-        static MqttFactory factory = new MqttFactory();
-        static IMqttClient mqttClient = factory.CreateMqttClient();
+        MqttFactory factory;
+        IMqttClient mqttClient;
 
         // Create TCP based options using the builder.
-        static IMqttClientOptions options = new MqttClientOptionsBuilder()
-                .WithClientId("Macbook")
-                .WithTcpServer("34.87.129.55", 1883)
-                .WithCredentials("device", "123456")
-                .WithCleanSession()
-                .Build();
+        IMqttClientOptions options;
 
         public MainPage()
         {
@@ -47,6 +42,27 @@ namespace Infinitas
             resultEntry.TextChanged += ResultEntry_TextChanged;
 
             qrcodeImageView.BarcodeOptions = new ZXing.Common.EncodingOptions { Height = 200, Width = 200 };
+
+            seed = "calm like predict rib country globe small nation festival divert liquid lonely";
+            endpoint = "https://rinkeby.infura.io/v3/77dd6590a15e41c688381e7ab2c28719";
+            erc20ContractAddress = "0x73447F2EA765B3e9e3994D2852dcC7E420940300";
+            erc20ContractAbi = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"ref\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]";
+            wallet = new EtherWallet(seed, null);
+            account = wallet.GetAccount(0);
+            web3 = new Web3(account, endpoint);
+            erc20Contract = web3.Eth.GetContract(erc20ContractAbi, erc20ContractAddress);
+
+            // Create a new MQTT client.
+            factory = new MqttFactory();
+            mqttClient = factory.CreateMqttClient();
+
+            // Create TCP based options using the builder.
+            options = new MqttClientOptionsBuilder()
+                    .WithClientId("Macbook")
+                    .WithTcpServer("34.87.129.55", 1883)
+                    .WithCredentials("device", "123456")
+                    .WithCleanSession()
+                    .Build();
 
         }
 
