@@ -39,9 +39,6 @@ namespace Infinitas
         {
             InitializeComponent();
             scanButton.Clicked += ScanButton_Clicked;
-            resultEntry.TextChanged += ResultEntry_TextChanged;
-
-            qrcodeImageView.BarcodeOptions = new ZXing.Common.EncodingOptions { Height = 200, Width = 200 };
 
             seed = "calm like predict rib country globe small nation festival divert liquid lonely";
             endpoint = "https://rinkeby.infura.io/v3/77dd6590a15e41c688381e7ab2c28719";
@@ -68,13 +65,9 @@ namespace Infinitas
 
         protected override async void OnAppearing()
         {
-            await mqttClient.ConnectAsync(options, CancellationToken.None);
-
-        }
-
-        private void ResultEntry_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            qrcodeImageView.BarcodeValue = string.IsNullOrEmpty(resultEntry.Text) ? "hello" : resultEntry.Text;
+            var balanceOf = erc20Contract.GetFunction("balanceOf");
+            var coin = await balanceOf.CallAsync<ulong>(account.Address);
+            balanceLabel.Text = coin.ToString();
         }
 
         private async void ScanButton_Clicked(object sender, EventArgs e)
@@ -82,11 +75,10 @@ namespace Infinitas
             // QRcode scanning
             var scanner = new ZXing.Mobile.MobileBarcodeScanner();
             var result = await scanner.Scan();
-            var resultText = result.Text;
-            resultEntry.Text = resultText;
+            if (result == null) return;            
 
             // Deserialize Json
-            var qrcodeJson = JsonSerializer.Deserialize<QrcodeFormat>(resultText);
+            var qrcodeJson = JsonSerializer.Deserialize<QrcodeFormat>(result.Text);
             var qrcodeAccount = qrcodeJson.Account;
             var qrcodePrice = qrcodeJson.Price;
             var qrcodeType = qrcodeJson.Type;
@@ -103,11 +95,12 @@ namespace Infinitas
             var filter = transferEvent.CreateFilterInput(account.Address, qrcodeAccount, null, null);
             var transferEventUpdate = await transferEvent.GetAllChanges(filter);
 
-            var indexEvent = transferEventUpdate.Count-1;
+            var indexEvent = transferEventUpdate.Count - 1;
             BigInteger refNum = transferEventUpdate[indexEvent].Event.Ref;
             var refHex = "0x" + refNum.ToString("x");
 
             // MQTT Publish Message
+            await mqttClient.ConnectAsync(options, CancellationToken.None);
             var publishMessage = new MqttApplicationMessageBuilder()
                 .WithTopic("pi/coffee/qr")
                 .WithPayload(account.Address + "," + refHex + "," + qrcodeType.ToString())

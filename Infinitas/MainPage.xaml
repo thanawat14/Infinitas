@@ -5,21 +5,30 @@
     xmlns:zxing="clr-namespace:ZXing.Net.Mobile.Forms;assembly=ZXing.Net.Mobile.Forms"
     x:Class="Infinitas.MainPage"
     BackgroundColor="White"
-    Padding="0"
     Title="Infinitas">
 
     <StackLayout VerticalOptions="Start"
-                 Margin="30">
-        <Entry x:Name="resultEntry"
-               Placeholder="QR Code Result"/>
-        <Button Text="Scan QR Code"
-                TextColor="Black"
-                BackgroundColor="Silver"
-                x:Name="scanButton"/>
+                 Margin="30"
+                 Spacing="20">
 
-        <zxing:ZXingBarcodeImageView x:Name="qrcodeImageView"
-                                     BarcodeValue="Hello"
-                                     HeightRequest="200"/>
+        <StackLayout HorizontalOptions="Center"
+                     Orientation="Horizontal">
+            <Label Text="Balance :"
+                   TextColor="Black"
+                   FontSize="Large"
+                   FontAttributes="Bold"/>
+
+            <Label TextColor="Black"
+                   FontSize="Large"
+                   x:Name="balanceLabel"/>
+        </StackLayout>
+        
+
+        <Button Text="Scan QR Code" WidthRequest="150"
+                HorizontalOptions="Center"
+                TextColor="Black"
+                BackgroundColor="LightSkyBlue"
+                x:Name="scanButton"/>
 
     </StackLayout>
 
